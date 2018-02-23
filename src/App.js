@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 // import logo from './logo.svg';
 import { NavLink } from 'react-router-dom'
-import './App.less';
 import RouterComponents from './router'
+import 'antd-mobile/dist/antd-mobile.css'; 
+import './App.less';
 
 export default class App extends Component {
   render() {
