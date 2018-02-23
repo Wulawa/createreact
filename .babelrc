@@ -1,5 +1,5 @@
 {
-  "plugins": [["import", { "libraryName": "antd-mobile", "style": true }]],
+  "plugins": [["import", { "libraryName": "antd-mobile", "style": "css" }]],
   "presets": [
     "react-app"
   ]

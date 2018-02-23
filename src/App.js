@@ -1,23 +1,94 @@
 import React, { Component } from 'react';
 // import logo from './logo.svg';
 import { NavLink } from 'react-router-dom'
+import { TabBar } from 'antd-mobile'
 import RouterComponents from './router'
-import 'antd-mobile/dist/antd-mobile.css'; 
 import './App.less';
 
 export default class App extends Component {
+  renderContent(pageText) {
+    return (
+      <div style={{ backgroundColor: 'white', height: '100%', textAlign: 'center' }}>
+        <div style={{ paddingTop: 60 }}>Clicked “{pageText}” tab， show “{pageText}” information</div>
+        <a style={{ display: 'block', marginTop: 40, marginBottom: 20, color: '#108ee9' }}
+          onClick={(e) => {
+            e.preventDefault();
+            this.setState({
+              hidden: !this.state.hidden,
+            });
+          }}
+        >
+          Click to show/hide tab-bar
+        </a>
+        <a style={{ display: 'block', marginBottom: 600, color: '#108ee9' }}
+          onClick={(e) => {
+            e.preventDefault();
+            this.setState({
+              fullScreen: !this.state.fullScreen,
+            });
+          }}
+        >
+          Click to switch fullscreen
+        </a>
+      </div>
+    );
+  }
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Welcom</h1>
-        </header>
         <RouterComponents></RouterComponents>
-        <ul style={styles.nav}>
+        {/* <ul style={styles.nav} className="tabbar">
           <NavLink to="/">home</NavLink>
           <NavLink to="/create">create</NavLink>
           <NavLink to="/main">main</NavLink>
-        </ul>
+        </ul> */}
+        <TabBar
+         unselectedTintColor="#949494"
+         tintColor="#33A3F4"
+         barTintColor="white"
+         >
+          <TabBar.Item
+            title="首页"
+            key="home"
+            icon={<svg className="icon" aria-hidden="true" slot="icon">
+              <use xlinkHref="#icon-home"></use>
+            </svg>
+            }
+            selectedIcon={<svg className="icon" aria-hidden="true" slot="icon">
+            <use xlinkHref="#icon-home"></use>
+          </svg>
+            }
+          >
+          </TabBar.Item>
+          
+          <TabBar.Item
+            title="创建直播"
+            key="create"
+            icon={<svg className="icon" aria-hidden="true" slot="icon">
+              <use xlinkHref="#icon-chuangjian"></use>
+            </svg>
+            }
+            selectedIcon={<svg className="icon" aria-hidden="true" slot="icon">
+            <use xlinkHref="#icon-chuangjian"></use>
+          </svg>
+            }
+          >
+          </TabBar.Item>
+          
+          <TabBar.Item
+            title="我的"
+            key="my"
+            icon={<svg className="icon" aria-hidden="true" slot="icon">
+              <use xlinkHref="#icon-my"></use>
+            </svg>
+            }
+            selectedIcon={<svg className="icon" aria-hidden="true" slot="icon">
+            <use xlinkHref="#icon-my"></use>
+          </svg>
+            }
+          >
+          </TabBar.Item>
+        </TabBar>
       </div>
     );
   }
@@ -33,12 +104,8 @@ styles.fill = {
   bottom: 0
 };
 
-styles.nav = {
-  padding: 0,
-  margin: 0,
-  position: "absolute",
+styles.TabBar = {
+  position: "fixed",
   bottom: 0,
   height: "40px",
-  width: "100%",
-  display: "flex"
 };

@@ -1,13 +1,16 @@
 import React, { Component } from 'react'
-import { Carousel, WhiteSpace, WingBlank } from 'antd-mobile';
+import { Carousel } from 'antd-mobile';
+import service from '@/service'
 import './home.less';
 
 class HomePage extends Component {
   state = {
-    banners:[1,2,3]
+    banners:[]
   }
-  componentWillMount(){
-
+  async componentDidMount(){
+    const banners = await service.getBanners();
+    console.log(banners)
+    this.setState({ banners })
   }
   render() {
     return (
@@ -19,7 +22,7 @@ class HomePage extends Component {
           beforeChange={(from, to) => console.log(`slide from ${from} to ${to}`)}
           afterChange={index => console.log('slide to', index)}
         >
-          {this.state.banners.map((item) => <div>{item}</div>)}
+          {this.state.banners.map((item,i) => <div key={i} ><img src={item.picUrl} alt='banner' className='banner'/></div>)}
         </Carousel>
       </div> 
     )
