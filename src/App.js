@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
+import { withRouter } from "react-router-dom";
+import { connect } from 'react-redux';
+import { getUserInfo } from '@/store/common/action';
+
 // import logo from './logo.svg';
-import { NavLink } from 'react-router-dom'
+// import { NavLink } from 'react-router-dom'
 import { TabBar } from 'antd-mobile'
 import RouterComponents from './router'
 import './App.less';
-
-export default class App extends Component {
+class App extends Component {
+  state = {
+    tabActive: '/',
+  }
   renderContent(pageText) {
     return (
       <div style={{ backgroundColor: 'white', height: '100%', textAlign: 'center' }}>
@@ -33,9 +39,17 @@ export default class App extends Component {
       </div>
     );
   }
+  componentDidMount(){
+    this.props.getUserInfo();
+  }
+  checkTab(tabActive) {
+    this.setState({ tabActive });
+    this.props.history.push(tabActive)
+  }
   render() {
     return (
       <div className="App">
+        {this.props.userData.userName}
         <RouterComponents></RouterComponents>
         {/* <ul style={styles.nav} className="tabbar">
           <NavLink to="/">home</NavLink>
@@ -50,6 +64,8 @@ export default class App extends Component {
           <TabBar.Item
             title="首页"
             key="home"
+            onPress={() => this.checkTab('/')}
+            selected={this.state.tabActive === '/'}
             icon={<svg className="icon" aria-hidden="true" slot="icon">
               <use xlinkHref="#icon-home"></use>
             </svg>
@@ -64,6 +80,8 @@ export default class App extends Component {
           <TabBar.Item
             title="创建直播"
             key="create"
+            selected={this.state.tabActive === 'create'}            
+            onPress={() => this.checkTab('create')}            
             icon={<svg className="icon" aria-hidden="true" slot="icon">
               <use xlinkHref="#icon-chuangjian"></use>
             </svg>
@@ -77,7 +95,9 @@ export default class App extends Component {
           
           <TabBar.Item
             title="我的"
-            key="my"
+            key="mine"
+            selected={this.state.tabActive === 'mine'}                     
+            onPress={() => this.checkTab('mine')}   
             icon={<svg className="icon" aria-hidden="true" slot="icon">
               <use xlinkHref="#icon-my"></use>
             </svg>
@@ -109,3 +129,9 @@ styles.TabBar = {
   bottom: 0,
   height: "40px",
 };
+
+export default withRouter(connect(state => ({ // withRouter将match，location和history道具给被包装组件。
+  userData: state.userData,  // connect注册需要的(mapStateToProps,mapDispatchToProps)(组件)生成容器组件
+}), {
+  getUserInfo
+})(App)); 

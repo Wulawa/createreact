@@ -16,13 +16,13 @@ class HomePage extends Component {
     return (
       <div id='homePage'>
         <Carousel
-          autoplay={false}
+          autoplay={true}
           infinite
           selectedIndex={1}
           beforeChange={(from, to) => console.log(`slide from ${from} to ${to}`)}
           afterChange={index => console.log('slide to', index)}
         >
-          {this.state.banners.map((item,i) => <div key={i} ><img src={item.picUrl} alt='banner' className='banner'/></div>)}
+          {this.state.banners.map((item,i) => <a key={i} src={item.link} ><img src={item.picUrl} alt='banner' className='banner'/></a>)}
         </Carousel>
       </div> 
     )
