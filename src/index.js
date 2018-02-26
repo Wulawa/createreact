@@ -10,12 +10,20 @@ import App from './App';
 // import routes from './router'
 import registerServiceWorker from './registerServiceWorker';
 
-console.log(store)
-ReactDOM.render((
-  <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </Provider>
-), document.getElementById('root'));
+const render = () => {
+  ReactDOM.render((
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
+  ), document.getElementById('root'));
+}
+render();
+if (module.hot) {
+  module.hot.accept('./App', () => {
+    render();
+  })
+}
 registerServiceWorker();
+

@@ -1,7 +1,7 @@
 import * as type from './actionType'
 let defaultState = {
-  userName: '',
-  age: 18
+    userName: '',
+    age: 18
 }
 
 export const userData = (state = defaultState, action) => {

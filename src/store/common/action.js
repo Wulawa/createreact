@@ -5,13 +5,11 @@ export const getUserInfo = () => {
   return dispatch => {
     try{
       // let result = await service.getUserInfo();
-      debugger;
       dispatch({
         type: types.USERINFO,
-        userInfo: {
-          userName: 'lisi',
-          age: 19
-        },
+        userName: 'lisi',
+        age: 19,
+        // ...result
       })
     }catch(err){
       console.error(err);

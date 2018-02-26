@@ -14,8 +14,8 @@ const news = Loadable({
   loader: () => import('./news'),
   loading:LoadingComponent
 })
-const main = Loadable({
-  loader: () => import('./main'),
+const mine = Loadable({
+  loader: () => import('./mine'),
   loading:LoadingComponent
 })
 const create = Loadable({
@@ -38,8 +38,8 @@ const routes = [
     component: create
   },
   {
-    path: "/main",
-    component: main
+    path: "/mine",
+    component: mine
   }
 ];
 

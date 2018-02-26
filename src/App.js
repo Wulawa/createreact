@@ -49,7 +49,6 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        {this.props.userData.userName}
         <RouterComponents></RouterComponents>
         {/* <ul style={styles.nav} className="tabbar">
           <NavLink to="/">home</NavLink>
@@ -94,7 +93,7 @@ class App extends Component {
           </TabBar.Item>
           
           <TabBar.Item
-            title="我的"
+            title="你的"
             key="mine"
             selected={this.state.tabActive === 'mine'}                     
             onPress={() => this.checkTab('mine')}   
@@ -130,8 +129,6 @@ styles.TabBar = {
   height: "40px",
 };
 
-export default withRouter(connect(state => ({ // withRouter将match，location和history道具给被包装组件。
-  userData: state.userData,  // connect注册需要的(mapStateToProps,mapDispatchToProps)(组件)生成容器组件
-}), {
+export default withRouter(connect(null, {
   getUserInfo
 })(App)); 
