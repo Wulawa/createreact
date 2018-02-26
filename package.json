@@ -98,6 +98,7 @@
   "devDependencies": {
     "less": "^2.7.3",
     "less-loader": "^4.0.5",
-    "postcss-pxtorem": "^4.0.1"
+    "postcss-pxtorem": "^4.0.1",
+    "react-hot-loader": "^3.1.3"
   }
 }

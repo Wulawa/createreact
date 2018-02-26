@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 class minePage extends Component {
   render() {
     return (
-      <div>userName:{this.props.userData.userName}</div> 
+      <div>userName1:{this.props.userData.userName}</div> 
     )
   }
 }
