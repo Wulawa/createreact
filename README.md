@@ -233,7 +233,7 @@ export const getUserInfo = () => {
 ```
 
 关于types文件
-使用单独的模块或文件来定义 action type 常量并不是必须的，甚至根本不需要定义。对于小应用来说，使用字符串做 action type 更方便些。不过，在大型应用中把它们显式地定义成常量还是利大于弊的。参照 减少样板代码 获取更多保持代码简洁的实践经验。
+使用单独的模块或文件来定义 action type 常量并不是必须的，甚至根本不需要定义。对于小应用来说，使用字符串做 action type 更方便些。不过，在大型应用中把它们显式地定义成常量还是利大于弊的。参照 减少样板代码 获取更多保持代码简洁的实践经验。3
 
 
 在模块中应用 action
@@ -287,3 +287,158 @@ export const userData = (state = defaultState, action) => {
 安装react-hot-loader
 
 [具体使用文档](https://www.npmjs.com/package/react-hot-loader)
+
+## redux-saga
+
+比较繁琐的一章
+首先需要了解Generator异步处理方法[Generator](Generator)
+redux-saga 使用了 ES6 的 Generator 功能，让异步的流程更易于读取，写入和测试。
+配置 
+```javascript
+  import { createStore, combineReducers, applyMiddleware } from 'redux'
+  import createSagaMiddleware from 'redux-saga' // redux-saga 核心函数创建一个中间件
+  import * as home from './common/reducer'
+  import commonSaga from './common/sagas'
+
+  const sagaMiddleware = createSagaMiddleware();
+  const store = createStore(
+    combineReducers({ ...home }),    // 绑定reducer 到 redux
+    applyMiddleware(sagaMiddleware)  // 添加saga中间件到 redux
+  );
+  sagaMiddleware.run(commonSaga);  // 将saga处理函数绑定到中间件
+
+  export default store
+
+```
+此时redux-saga工作流程
+应用场景触发action函数，由saga捕获dispatch，saga通过封装的Generator进入异步状态，返回结果后进行pull（dispatch），reducer进行处理
+```javascript
+function * userInfo () {
+    while(true){
+        yield take(types.GET_USERINFO);
+        try{
+            const response = yield call(service.getUserInfo);
+            const userData = response.data ;
+            yield put({type: types.USERINFO, data: fromJS(userData)});
+            yield put({ type: types.IS_LOGIN, isLogin: true });
+        } catch(err){
+            const mock = {
+              userName: 'lisi',
+              age: 19,
+            }
+            yield put({type: types.USERINFO, data: fromJS(mock)});
+            yield put({ type: types.LOGIN_URL, url: 'http://www.baidu.com' });            
+            yield put({ type: types.IS_LOGIN, isLogin: false });
+        }
+    }
+} 
+
+function * commonEntry() {
+    yield fork(userInfo);
+}
+```
+通过while函数，当一次状态处理结束后，再次进入捕获阶段
+[saga文档]('https://redux-saga-in-chinese.js.org/')
+  #### Generator
+  es6 协程 异步处理
+  形式上，Generator 函数是一个普通函数，但是有两个特征。一是，function关键字与函数名之间有一个星号；二是，函数体内部使用yield表达式，定义不同的内部状态
+  ```javascript
+  function* helloWorldGenerator() {
+    yield 'hello';
+    yield 'world';
+    return 'ending';
+  }
+
+  var hw = helloWorldGenerator(); // 此时helloWorldGenerator不会有任何输出
+  ```
+  现在我们定义的helloWorldGenerator函数内部有三个状态hello， world， ending
+
+  >下一步，必须调用遍历器对象的next方法，使得指针移向下一个状态。也就是说，每次调用next方法，内部指针就从函数头部或上一次停下来的地方开始执行，直到遇到下一个yield表达式（或return语句）为止。换言之，Generator 函数是分段执行的，yield表达式是暂停执行的标记，而next方法可以恢复执行。
+  
+  ```javascript
+  hw.next()
+  // { value: 'hello', done: false }
+
+  hw.next()
+  // { value: 'world', done: false }
+
+  hw.next()
+  // { value: 'ending', done: true }
+
+  hw.next()
+  // { value: undefined, done: true }
+  ```
+  next方法执行后返回 当前状态返回的值， done为true时后面没有状态；
+  next函数可接受一个参数，为当前状态的返回值  例如: yield 返回值
+
+  Generator创建时会生成 Iterator对象 所以 可以通过 for of 进行遍历
+  ```javascript
+  function* foo() {
+    yield 1;
+    yield 2;
+    yield 3;
+    yield 4;
+    yield 5;
+    return 6;
+  }
+
+  for (let v of foo()) {
+    console.log(v);
+  }
+  // 1 2 3 4 5
+  ```
+  <h5>for of便利时会自动执行next();</h5>
+  因此利用for...of循环，可以写出遍历任意对象（object）的方法。原生的 JavaScript 对象没有遍历接口，无法使用for...of循环，通过 Generator 函数为它加上这个接口，就可以用了。
+  例：
+  ```javascript
+  function* objectEntries(obj) {
+    let propKeys = Reflect.ownKeys(obj);
+
+    for (let propKey of propKeys) {
+      yield [propKey, obj[propKey]];
+    }
+  }
+
+  let jane = { first: 'Jane', last: 'Doe' };
+
+  for (let [key, value] of objectEntries(jane)) {
+    console.log(`${key}: ${value}`);
+  }
+  // first: Jane
+  // last: Doe
+  ```
+  除了for...of循环以外，扩展运算符（...）、解构赋值和Array.from方法内部调用的，都是遍历器接口。这意味着，它们都可以将 Generator 函数返回的 Iterator 对象，作为参数。
+  ```javascript
+  function* numbers () {
+    yield 1
+    yield 2
+    return 3
+    yield 4
+  }
+
+  // 扩展运算符
+  [...numbers()] // [1, 2]
+
+  // Array.from 方法
+  Array.from(numbers()) // [1, 2]
+
+  // 解构赋值
+  let [x, y] = numbers();
+  x // 1
+  y // 2
+
+  // for...of 循环
+  for (let n of numbers()) {
+    console.log(n)
+  }
+  // 1
+  // 2
+  ```
+
+## immutable
+
+数据结构处理
+
+## propTypes
+
+数据类型验证
